@@ -4,4 +4,22 @@ Setup commands:
 
 1. git config --global user.name “[firstname lastname]”
 2. git config --global user.email “[valid-email]”
-3. 
+3. git push --set-upstream origin master
+4. git init :  Initializes a new Git repository in the current directory.
+5. git clone : Copies a repository from a remote source to your local machine.
+6. git add : Adds changes in the working directory to the staging area.
+7. git commit -m "Commit message" : Records changes staged for the next commit.
+8. git status: Shows the status of changes in the working directory.
+9. git pull:  Fetches changes from a remote repository and merges them into the current branch.
+10. git push: Pushes committed changes to a remote repository.
+11. git branch: Lists existing branches 
+12. git branch <branch_name>: creates a new branch.
+13. git checkout: Switches branches or restores working tree files.
+14. git merge: Combines changes from one branch into another.
+15. git log: Shows a list of commits in reverse chronological order.
+16. git reset <commit_hash>: Resets the current HEAD to the specified state.
+17. git revert <Commit_hash>: Reverts specified commits.
+18. git stash: Temporarily shelves changes you've made to your working copy so you can work on something else.
+19. git remote: Manages set of tracked repositories.
+20. git push --set-upstream origin master: push the current local branch to the remote repository (in this case, named "origin") and set up the tracking information so that the local branch is linked to the remote branch.
+21. 
