@@ -1,0 +1,7 @@
+Git Commands:
+
+Setup commands:
+
+1. git config --global user.name “[firstname lastname]”
+2. git config --global user.email “[valid-email]”
+3. 
