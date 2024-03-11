@@ -1,5 +1,3 @@
-Install Jenkins for ubuntu ec2 Instance with userdata:
-
 #!/bin/bash
 
 # Update package lists
