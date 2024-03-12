@@ -5,6 +5,7 @@ pipeline {
         gitUrl = 'https://github.com/Ragavendran19950713/Proton.git'
         deployBranch = 'Demo'
         REMOTE_USER = 'ubuntu'
+        REMOTE_HOST = '54.205.154.250'
         SSH_KEY = credentials('d45e0000-ab31-45f9-bfb5-a7ca56980727')
         REMOTE_PARENT_DIRECTORY = '/home/ubuntu'
         NEW_DIRECTORY_NAME = 'remote-repository'
@@ -33,7 +34,7 @@ pipeline {
                     // Start the SSH agent
                     sshagent(['d45e0000-ab31-45f9-bfb5-a7ca56980727']) {
                         // SSH command to create the directory with a specific name on the remote server
-                        sh "ssh -o StrictHostKeyChecking=no -i ${SSH_KEY} ${REMOTE_USER}@${params.REMOTE_HOST} 'mkdir -p ${REMOTE_NEW_DIRECTORY}'"
+                        sh "ssh -o StrictHostKeyChecking=no -i ${SSH_KEY} ${REMOTE_USER}@${REMOTE_HOST} 'mkdir -p ${REMOTE_NEW_DIRECTORY}'"
                     }
                 }
             }
@@ -46,7 +47,7 @@ pipeline {
                     sshagent(['d45e0000-ab31-45f9-bfb5-a7ca56980727']) {
                         // SSH command to copy code to the remote server
                         // sh "scp -o StrictHostKeyChecking=no -i ${SSH_KEY} -r ${projectWorkspace}/* ${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_NEW_DIRECTORY}/"
-                        sh "scp -o StrictHostKeyChecking=no -i ${SSH_KEY} -r ${projectWorkspace}/.[!.]* ${projectWorkspace}/* ${REMOTE_USER}@${params.REMOTE_HOST}:${REMOTE_NEW_DIRECTORY}/"
+                        sh "scp -o StrictHostKeyChecking=no -i ${SSH_KEY} -r ${projectWorkspace}/.[!.]* ${projectWorkspace}/* ${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_NEW_DIRECTORY}/"
                     }
                 }
             }
