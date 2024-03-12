@@ -1,0 +1,104 @@
+pipeline {
+    agent any
+    environment {
+        gitCredentialId = 'cdac204e-fcba-4093-b625-59ad00f7e66b'
+        gitUrl = 'https://github.com/Ragavendran19950713/Proton.git'
+        deployBranch = 'Demo'
+        REMOTE_USER = 'ubuntu'
+        SSH_KEY = credentials('d45e0000-ab31-45f9-bfb5-a7ca56980727')
+        REMOTE_PARENT_DIRECTORY = '/home/ubuntu'
+        NEW_DIRECTORY_NAME = 'remote-repository'
+        REMOTE_NEW_DIRECTORY = "${REMOTE_PARENT_DIRECTORY}/${NEW_DIRECTORY_NAME}"
+        projectWorkspace = "${WORKSPACE}"
+        DOCKERFILE_PATH = '/home/ubuntu/remote-repository/Dockerfile'
+        IMAGE_NAME = 'nginx'
+        DATE_TIME_FORMAT = 'yyyyMMdd-HHmmss'
+        IMAGE_TAG = "${env.BUILD_ID}-${sh(script: 'date +\"${DATE_TIME_FORMAT}\"', returnStdout: true).trim()}"
+    }
+    stages {
+        stage('Checkout') {
+            steps {
+                cleanWs()
+                git(
+                    url: gitUrl,
+                    credentialsId: gitCredentialId,
+                    branch: deployBranch
+                )
+            }
+        }
+
+        stage('Create Directory on Remote Server') {
+            steps {
+                script {
+                    // Start the SSH agent
+                    sshagent(['d45e0000-ab31-45f9-bfb5-a7ca56980727']) {
+                        // SSH command to create the directory with a specific name on the remote server
+                        sh "ssh -o StrictHostKeyChecking=no -i ${SSH_KEY} ${REMOTE_USER}@${params.REMOTE_HOST} 'mkdir -p ${REMOTE_NEW_DIRECTORY}'"
+                    }
+                }
+            }
+        }
+
+        stage('Copy Code to Remote Server') {
+            steps {
+                script {
+                    // Start the SSH agent
+                    sshagent(['d45e0000-ab31-45f9-bfb5-a7ca56980727']) {
+                        // SSH command to copy code to the remote server
+                        // sh "scp -o StrictHostKeyChecking=no -i ${SSH_KEY} -r ${projectWorkspace}/* ${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_NEW_DIRECTORY}/"
+                        sh "scp -o StrictHostKeyChecking=no -i ${SSH_KEY} -r ${projectWorkspace}/.[!.]* ${projectWorkspace}/* ${REMOTE_USER}@${params.REMOTE_HOST}:${REMOTE_NEW_DIRECTORY}/"
+                    }
+                }
+            }
+        }
+
+//         stage('Remove Existing Docker Container') {
+//             steps {
+//                 script {
+//                     sshagent(['37aca6f9-af8d-4922-8ac0-978dcd955efa']) {
+//                     sh "ssh -o StrictHostKeyChecking=no -i ${SSH_KEY} ${REMOTE_USER}@${REMOTE_HOST} 'docker rm -f \$(docker ps -aq)'"
+//             }
+//         }
+//     }
+// }
+
+//         stage('Remove Existing Docker Image') {
+//             steps {
+//                 script {
+//                     sshagent(['37aca6f9-af8d-4922-8ac0-978dcd955efa']) {
+//                     sh "ssh -o StrictHostKeyChecking=no -i ${SSH_KEY} ${REMOTE_USER}@${REMOTE_HOST} 'docker rmi -f \$(docker images -q)'"
+//             }
+//         }
+//     }
+// }
+
+        // stage('Build Docker Image on Remote Host') {
+        //     steps {
+        //         script {
+        //             sshagent(['d45e0000-ab31-45f9-bfb5-a7ca56980727']) {
+        //                 sh "ssh -o StrictHostKeyChecking=no -i ${SSH_KEY} ${REMOTE_USER}@${REMOTE_HOST} 'cd ${REMOTE_NEW_DIRECTORY} && docker build -t ${IMAGE_NAME}:${IMAGE_TAG} -f ${DOCKERFILE_PATH} .'"
+        //             }
+        //         }
+        //     }
+        // }
+
+        // stage('Build Docker container on Remote Host') {
+        //     steps {
+        //         script {
+        //             sshagent(['d45e0000-ab31-45f9-bfb5-a7ca56980727']) {
+        //                 sh "ssh -o StrictHostKeyChecking=no -i ${SSH_KEY} ${REMOTE_USER}@${REMOTE_HOST} 'cd ${REMOTE_NEW_DIRECTORY} && docker-compose up -d'"
+        //             }
+        //         }
+        //     }
+        // }
+        // stage('Clean up Workspace on Remote Server') {
+        //     steps {
+        //         script {
+        //             sshagent(['d45e0000-ab31-45f9-bfb5-a7ca56980727']) {
+        //                 sh "ssh -o StrictHostKeyChecking=no -i ${SSH_KEY} ${REMOTE_USER}@${REMOTE_HOST} 'sudo rm -rf ${REMOTE_NEW_DIRECTORY}'"
+        //             }
+        //         }
+        //     }
+        // }
+    }
+}
